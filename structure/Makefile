@@ -2,8 +2,12 @@
 
 CFLAGS=-Wall -g
 
+name= ./main
+
+run: main
+	valgrind ${name}
+
 main: linkedlist.o main.o
-	valgrind ./main
 
 clean:
 	rm -f *.o
@@ -11,4 +15,4 @@ clean:
 fclean:
 	rm -f *.o main
 
-re: clean driver
+re: clean main
