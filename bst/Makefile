@@ -1,11 +1,11 @@
 .PHONY: clean
 
-CFLAGS=-Wall -g
+CFLAGS=-Wall -g -DBST
 
 run: bst
 	./bst
 
-bst: main.o bst.o
+bst: test.o bst.o
 
 clean:
 	rm -f *.o

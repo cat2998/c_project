@@ -1,121 +1,279 @@
 #include "bst.h"
 
-rbtree *new_rbtree(void)
+void postorder_delete(node_t *node);
+
+bstree *new_bstree(void)
 {
-    rbtree *p = (rbtree *)calloc(1, sizeof(rbtree));
+    bstree *p = (bstree *)calloc(1, sizeof(bstree));
     p->root = NULL;
     p->nil = NULL;
     return p;
 }
 
-void delete_rbtree(rbtree *t)
+void delete_bstree(bstree *t)
 {
-    // TODO: reclaim the tree nodes's memory
+    postorder_delete(t->root);
     free(t);
+    return;
 }
 
-void rbtree_find_insert(rbtree *t, node_t *node)
+node_t *bstree_insert(bstree *t, const key_t key)
 {
-    node_t *n;
-    node_t *parent;
-    n = t->root;
+    // node_t *node;
+    // node_t *new_node = (node_t *)calloc(1, sizeof(node_t));
 
-    while (n != NULL)
-    {
-        parent = n;
-        if (n->key > node->key)
-        {
-            n = n->left;
-        }
-        else
-        {
-            n = n->right;
-        }
-    }
+    // node = find_node(t, key);
+    // if (node == NULL)
+    // {
+    //     t->root = new_node;
+    //     new_node->parent = NULL;
+    // }
+    // else
+    // {
+    //     if (node->left == NULL && node->key != key)
+    //         node->left = new_node;
+    //     else
+    //         node->right = new_node;
+    //     new_node->parent = node;
+    // }
+    // new_node->key = key;
+    // new_node->left = NULL;
+    // new_node->right = NULL;
 
-    return node;
-}
+    // return t->root;
 
-node_t *rbtree_insert(rbtree *t, const key_t key)
-{
     node_t *node;
-    node_t *parent;
     node_t *new_node = (node_t *)calloc(1, sizeof(node_t));
 
-    node = rbtree_find(t, key);
-    if (node != NULL)
+    node = t->root;
+    if (node == NULL)
     {
-        node->right = new_node;
-        new_node->parent = node;
+        t->root = new_node;
+        new_node->parent = NULL;
+        new_node->key = key;
+        new_node->left = NULL;
+        new_node->right = NULL;
     }
     else
     {
-        node = t->root;
         while (node != NULL)
         {
-            new_node->parent = node;
             if (node->key > key)
             {
+                if (node->left == NULL)
+                {
+                    node->left = new_node;
+                    new_node->parent = node;
+                    new_node->key = key;
+                    new_node->left = NULL;
+                    new_node->right = NULL;
+                    return new_node;
+                }
                 node = node->left;
             }
             else
             {
+                if (node->right == NULL)
+                {
+                    node->right = new_node;
+                    new_node->parent = node;
+                    new_node->key = key;
+                    new_node->left = NULL;
+                    new_node->right = NULL;
+                    return new_node;
+                }
                 node = node->right;
             }
         }
     }
 
-    new_node->key = key;
-    new_node->left = NULL;
-    new_node->right = NULL;
-
-    return t->root;
+    return new_node;
 }
 
-node_t *rbtree_find(const rbtree *t, const key_t key)
+// // 트리에서 같은 노드를 찾으면 찾은 노드 반환, 못 찾으면 마지막노드 반환, 루트면 NULL 반환
+// node_t *find_node(const bstree *t, const key_t key)
+// {
+//     node_t *node;
+//     node = t->root;
+
+//     while (node != NULL)
+//     {
+//         if (node->key == key)
+//             return node;
+//         else if (node->key > key)
+//         {
+//             if (node->left == NULL)
+//                 return node;
+//             node = node->left;
+//         }
+//         else
+//         {
+//             if (node->right == NULL)
+//                 return node;
+//             node = node->right;
+//         }
+//     }
+
+//     return node;
+// }
+
+node_t *bstree_find(const bstree *t, const key_t key)
 {
-    // TODO: implement find
     node_t *node;
     node = t->root;
+
     while (node != NULL)
     {
         if (node->key == key)
-        {
-            printf("찾았다!! %d\n", node->key);
             return node;
-        }
         else if (node->key > key)
-        {
             node = node->left;
-        }
         else
-        {
             node = node->right;
-        }
     }
+
     return node;
 }
 
-node_t *rbtree_min(const rbtree *t)
+node_t *bstree_min_max(node_t *node, int direction)
 {
-    // TODO: implement find
-    return t->root;
+    while (node != NULL)
+    {
+        if (direction == 1)
+        {
+            if (node->right == NULL)
+                return node;
+            node = node->right;
+        }
+        else
+        {
+            if (node->left == NULL)
+                return node;
+            node = node->left;
+        }
+    }
+
+    return node;
 }
 
-node_t *rbtree_max(const rbtree *t)
+node_t *bstree_min(const bstree *t)
 {
-    // TODO: implement find
-    return t->root;
+    return bstree_min_max(t->root, 0);
 }
 
-int rbtree_erase(rbtree *t, node_t *p)
+node_t *bstree_max(const bstree *t)
 {
-    // TODO: implement erase
+    return bstree_min_max(t->root, 1);
+}
+
+void erase_zero_node(bstree *t, node_t *node)
+{
+    if (node->parent != NULL)
+    {
+        if (node->parent->left == node)
+            node->parent->left = NULL;
+        else
+            node->parent->right = NULL;
+    }
+    else
+        t->root = NULL;
+
+    free(node);
+    return;
+}
+
+void erase_one_node(bstree *t, node_t *node)
+{
+    node_t *sub_node;
+
+    if (node->left != NULL)
+        sub_node = node->left;
+    else
+        sub_node = node->right;
+
+    if (node->parent != NULL)
+    {
+        if (node->parent->left == node)
+            node->parent->left = sub_node;
+        else
+            node->parent->right = sub_node;
+        sub_node->parent = node->parent;
+    }
+    else
+    {
+        t->root = sub_node;
+        sub_node->parent = NULL;
+    }
+
+    free(node);
+    return;
+}
+
+void erase_multi_node(bstree *t, node_t *node)
+{
+    int temp;
+    node_t *succession_node;
+
+    succession_node = bstree_min_max(node->right, 0);
+    temp = succession_node->key;
+    if (succession_node->left == NULL && succession_node->right == NULL)
+        erase_zero_node(t, succession_node);
+    else
+        erase_one_node(t, succession_node);
+    node->key = temp;
+
+    return;
+}
+
+int bstree_erase(bstree *t, node_t *p)
+{
+    node_t *node;
+
+    if (t->root != NULL && p != NULL)
+    {
+        node = bstree_find(t, p->key);
+        if (node != NULL)
+        {
+            if (node->left == NULL && node->right == NULL)
+                erase_zero_node(t, node);
+            else if (node->left == NULL || node->right == NULL)
+                erase_one_node(t, node);
+            else
+                erase_multi_node(t, node);
+        }
+    }
+
     return 0;
 }
 
-int rbtree_to_array(const rbtree *t, key_t *arr, const size_t n)
+void postorder_delete(node_t *node)
 {
-    // TODO: implement to_array
+    if (node != NULL)
+    {
+        if (node->left != NULL)
+            postorder_delete(node->left);
+        if (node->right != NULL)
+            postorder_delete(node->right);
+        free(node);
+    }
+    return;
+}
+
+int inorder(node_t *node, key_t *arr, int i, int n)
+{
+    if (i >= n)
+        return 0;
+    if (node->left != NULL)
+        i = inorder(node->left, arr, i, n);
+    if (node != NULL)
+        arr[i++] = node->key;
+    if (node->right != NULL)
+        i = inorder(node->right, arr, i, n);
+    return i;
+}
+
+int bstree_to_array(const bstree *t, key_t *arr, const size_t n)
+{
+    inorder(t->root, arr, 0, n);
     return 0;
 }
