@@ -3,7 +3,7 @@
 CFLAGS=-Wall -g -DBST
 
 run: bst
-	./bst
+	valgrind ./bst
 
 bst: test.o bst.o
 

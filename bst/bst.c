@@ -17,42 +17,24 @@ void delete_bstree(bstree *t)
     return;
 }
 
-node_t *bstree_insert(bstree *t, const key_t key)
+void init_new_node(node_t *new_node, key_t key)
 {
-    // node_t *node;
-    // node_t *new_node = (node_t *)calloc(1, sizeof(node_t));
+    new_node->key = key;
+    new_node->left = NULL;
+    new_node->right = NULL;
+    return;
+}
 
-    // node = find_node(t, key);
-    // if (node == NULL)
-    // {
-    //     t->root = new_node;
-    //     new_node->parent = NULL;
-    // }
-    // else
-    // {
-    //     if (node->left == NULL && node->key != key)
-    //         node->left = new_node;
-    //     else
-    //         node->right = new_node;
-    //     new_node->parent = node;
-    // }
-    // new_node->key = key;
-    // new_node->left = NULL;
-    // new_node->right = NULL;
-
-    // return t->root;
-
+void insert_node(bstree *t, node_t *new_node, key_t key)
+{
     node_t *node;
-    node_t *new_node = (node_t *)calloc(1, sizeof(node_t));
 
     node = t->root;
     if (node == NULL)
     {
         t->root = new_node;
         new_node->parent = NULL;
-        new_node->key = key;
-        new_node->left = NULL;
-        new_node->right = NULL;
+        init_new_node(new_node, key);
     }
     else
     {
@@ -64,10 +46,8 @@ node_t *bstree_insert(bstree *t, const key_t key)
                 {
                     node->left = new_node;
                     new_node->parent = node;
-                    new_node->key = key;
-                    new_node->left = NULL;
-                    new_node->right = NULL;
-                    return new_node;
+                    init_new_node(new_node, key);
+                    return;
                 }
                 node = node->left;
             }
@@ -77,45 +57,24 @@ node_t *bstree_insert(bstree *t, const key_t key)
                 {
                     node->right = new_node;
                     new_node->parent = node;
-                    new_node->key = key;
-                    new_node->left = NULL;
-                    new_node->right = NULL;
-                    return new_node;
+                    init_new_node(new_node, key);
+                    return;
                 }
                 node = node->right;
             }
         }
     }
 
-    return new_node;
+    return;
 }
 
-// // 트리에서 같은 노드를 찾으면 찾은 노드 반환, 못 찾으면 마지막노드 반환, 루트면 NULL 반환
-// node_t *find_node(const bstree *t, const key_t key)
-// {
-//     node_t *node;
-//     node = t->root;
+node_t *bstree_insert(bstree *t, const key_t key)
+{
+    node_t *new_node = (node_t *)calloc(1, sizeof(node_t));
 
-//     while (node != NULL)
-//     {
-//         if (node->key == key)
-//             return node;
-//         else if (node->key > key)
-//         {
-//             if (node->left == NULL)
-//                 return node;
-//             node = node->left;
-//         }
-//         else
-//         {
-//             if (node->right == NULL)
-//                 return node;
-//             node = node->right;
-//         }
-//     }
-
-//     return node;
-// }
+    insert_node(t, new_node, key);
+    return new_node;
+}
 
 node_t *bstree_find(const bstree *t, const key_t key)
 {
