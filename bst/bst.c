@@ -188,18 +188,15 @@ int bstree_erase(bstree *t, node_t *p)
 {
     node_t *node;
 
-    if (t->root != NULL && p != NULL)
+    node = bstree_find(t, p->key);
+    if (node != NULL)
     {
-        node = bstree_find(t, p->key);
-        if (node != NULL)
-        {
-            if (node->left == NULL && node->right == NULL)
-                erase_zero_node(t, node);
-            else if (node->left == NULL || node->right == NULL)
-                erase_one_node(t, node);
-            else
-                erase_multi_node(t, node);
-        }
+        if (node->left == NULL && node->right == NULL)
+            erase_zero_node(t, node);
+        else if (node->left == NULL || node->right == NULL)
+            erase_one_node(t, node);
+        else
+            erase_multi_node(t, node);
     }
 
     return 0;
@@ -222,12 +219,14 @@ int inorder(node_t *node, key_t *arr, int i, int n)
 {
     if (i >= n)
         return 0;
-    if (node->left != NULL)
-        i = inorder(node->left, arr, i, n);
     if (node != NULL)
+    {
+        if (node->left != NULL)
+            i = inorder(node->left, arr, i, n);
         arr[i++] = node->key;
-    if (node->right != NULL)
-        i = inorder(node->right, arr, i, n);
+        if (node->right != NULL)
+            i = inorder(node->right, arr, i, n);
+    }
     return i;
 }
 
