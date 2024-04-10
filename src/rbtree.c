@@ -123,7 +123,7 @@ void rbtree_insert_fixup(rbtree *t, node_t *node)
 				right_rotate(t, node->parent->parent);
 			}
 			else if (uncle->color == RBTREE_RED) // 삼촌이 red
-			{									 // (case 1) 부모가 red, 삼촌이 red => 부모와 삼촌 black으로, 할아버지 red로 바꾸고 할아버지 다시 검사
+			{									 // (case 1) 부모가 red, 삼촌이 red 이면 => 부모와 삼촌 black으로, 할아버지 red로 바꾸고 할아버지 다시 검사
 				node->parent->color = RBTREE_BLACK;
 				uncle->color = RBTREE_BLACK;
 				node->parent->parent->color = RBTREE_RED;
@@ -133,26 +133,19 @@ void rbtree_insert_fixup(rbtree *t, node_t *node)
 		else // 부모가 할아버지의 오른쪽자식
 		{
 			uncle = node->parent->parent->left;
-
 			if (uncle->color == RBTREE_BLACK) // 삼촌이 black
 			{
-				// 본인이 부모의 왼쪽자식
-				// (case 3`) 부모가 red, 삼촌이 black, 부모가 할아버지의 오른쪽이고 본인은 부모의 왼쪽이면 => 부모기준 오른쪽 회전 후 case2 실행
-				if (node->parent->left == node)
-				{
+				if (node->parent->left == node) // 본인이 부모의 왼쪽자식
+				{								// (case 3`) 부모가 red, 삼촌이 black, 부모가 할아버지의 오른쪽이고 본인은 부모의 왼쪽이면 => 부모기준 오른쪽 회전 후 case2 실행
 					right_rotate(t, node->parent);
 					node = node->right;
 				}
-				// 본인이 부모의 오른쪽자식
-				// (case 2`) 부모가 red, 삼촌이 black, 왼쪽 일직선이면 => 할아버지와 부모 색 바꾸고 할아버지기준 왼쪽 회전
-				node->parent->color = RBTREE_BLACK;
-				node->parent->parent->color = RBTREE_RED;
+				node->parent->color = RBTREE_BLACK;		  // 본인이 부모의 오른쪽자식
+				node->parent->parent->color = RBTREE_RED; // (case 2`) 부모가 red, 삼촌이 black, 왼쪽 일직선이면 => 할아버지와 부모 색 바꾸고 할아버지기준 왼쪽 회전
 				left_rotate(t, node->parent->parent);
 			}
-			// 삼촌이 red
-			else if (uncle->color == RBTREE_RED)
-			{
-				// (case 1) 부모가 red, 삼촌이 red => 부모와 삼촌 black으로, 할아버지 red로 바꾸고 할아버지 다시 검사
+			else if (uncle->color == RBTREE_RED) // 삼촌이 red
+			{									 // (case 1) 부모가 red, 삼촌이 red 이면 => 부모와 삼촌 black으로, 할아버지 red로 바꾸고 할아버지 다시 검사
 				node->parent->color = RBTREE_BLACK;
 				uncle->color = RBTREE_BLACK;
 				node->parent->parent->color = RBTREE_RED;
@@ -316,8 +309,7 @@ void rbtree_delete_fixup(rbtree *t, node_t *node)
 				else
 					rbtree_delete_fixup(t, node->parent);
 			}
-			// 형제가 black
-			else
+			else // 형제가 black
 			{
 				if (sibling->left->color == RBTREE_RED) // 형제의 왼쪽 자녀가 red
 				{										// (case 3) 형제는 red, 왼쪽 자녀는 black으로 바꾸고 형제를 기준으로 오른쪽 회전. 그리고 case 4 적용
@@ -355,8 +347,7 @@ void rbtree_delete_fixup(rbtree *t, node_t *node)
 				else
 					rbtree_delete_fixup(t, node->parent);
 			}
-			// 형제가 black
-			else
+			else // 형제가 black
 			{
 				if (sibling->right->color == RBTREE_RED) // 형제의 오른쪽 자녀가 red
 				{										 // (case 3) 형제는 red, 오른쪽 자녀는 black으로 바꾸고 형제를 기준으로 왼쪽 회전. 그리고 case 4 적용
