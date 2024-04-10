@@ -1,8 +1,8 @@
 .PHONY: clean
 
-CFLAGS=-Wall -g -DBST
+CFLAGS=-Wall -g -DBST -DSENTINEL
 
-run: bst
+run: clean bst
 	valgrind ./bst
 
 bst: test.o bst.o

@@ -28,7 +28,7 @@ typedef struct node_t
 typedef struct
 {
     node_t *root;
-    // node_t *nil;  // for sentinel
+    node_t *nil; // for sentinel
 } bstree;
 
 bstree *new_bstree(void);
