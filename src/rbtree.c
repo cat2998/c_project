@@ -372,7 +372,7 @@ int rbtree_erase(rbtree *t, node_t *p)
 {
 	int delete_color;
 	node_t *node;
-	node_t *doubly_node;
+	node_t *doubly_node = NULL;
 
 	node = rbtree_find(t, p->key);
 	if (node != t->nil)
